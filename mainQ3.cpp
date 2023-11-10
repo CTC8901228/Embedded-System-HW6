@@ -20,13 +20,13 @@ static size_t half_transfer_events = 0;
 static size_t transfer_complete_events = 0;
 void prt_half(){
     // printf("half_transfer_events\n");
-    led2=1;
-    led3=0;
+    led2=led2^1;
+    // led3=0;
 
 }
 void prt_all(){
-    led3=1;
-    led2=0;
+    led3=led3^1;
+    // led2=0;
 
     // printf("transfer_events\n");
 
@@ -86,8 +86,8 @@ void target_audio_buffer_full() {   //這是32000全滿ㄌ
 void BSP_AUDIO_IN_HalfTransfer_CallBack(uint32_t Instance) {
     half_transfer_events++;
     // ev_queue.call(prt_half);
-    led3=1;
-    led2=0;
+    led3=led3^1;
+    // led2=0;
     if (half_transfer_events < SKIP_FIRST_EVENTS) return;
 
     uint32_t buffer_size = PCM_BUFFER_LEN / 2; /* Half Transfer */
@@ -115,8 +115,8 @@ void BSP_AUDIO_IN_HalfTransfer_CallBack(uint32_t Instance) {
 void BSP_AUDIO_IN_TransferComplete_CallBack(uint32_t Instance) {
     transfer_complete_events++;
     // ev_queue.call(prt_all);
-    led3=0;
-    led2=1;
+    // led3=0;
+    led2=led2^1;
 
     if (transfer_complete_events < SKIP_FIRST_EVENTS) return;
 
