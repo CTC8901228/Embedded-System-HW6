@@ -7,9 +7,9 @@
 TIM_HandleTypeDef htim1;
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma1;
-uint16_t show[50]={0};
+uint16_t show[128]={0};
 bool flag=0;
-uint16_t d[100]={0};
+// uint16_t d[100]={0};
 
 static events::EventQueue event_queue(32 * EVENTS_EVENT_SIZE);
 
@@ -123,7 +123,7 @@ void timer_count_callback()
     Temperature = (TS_TYP_CALx_VOLT(uV) - TS_ADC_DATA * Conversion_uV)
   *                         / Avg_Slope + CALx_TEMP
   */
-    for (int i=0;i<50;i++){
+    for (int i=0;i<128;i++){
      printf(" %d ",   show[i]);
     //  printf(" %lf ",   (show[i]-0.76*1000)/2.5+25.0);
     
@@ -145,9 +145,9 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     // }
 	//to do ..........................
     flag=1;
-    for(int i=50;i<100;i++){
+    for(int i=128;i<256;i++){
         // printf("0");
-        show[i-50]=d[i];
+        show[i-128]=sample_buffer[i];
 
         }
         event_queue.call(timer_count_callback);
@@ -160,10 +160,10 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
         // printf("0",HAL_ADC_GetValue(hadc));
     flag=1;
 
-  for(int i=0;i<50;i++){
+  for(int i=0;i<128;i++){
         // printf("0");
         // d[i]=8888;
-        show[i]=d[i];
+        show[i]=sample_buffer[i];
 
 
         }
@@ -243,7 +243,7 @@ static void TIM1_Init(void)
     htim1.Instance = TIM1;
     htim1.Init.Prescaler = 4000 - 1;
     htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim1.Init.Period = 1000 - 500;
+    htim1.Init.Period = 500 - 1;
     htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
@@ -280,7 +280,7 @@ int main()
 // uint32_t* d[1]={0};
 //    HAL_ADC_Start_DMA(&hadc1,(uint32_t*)  d,1);///*to do ........................*/);
 
-    HAL_ADC_Start_DMA(&hadc1,(uint32_t*)d,100);
+    HAL_ADC_Start_DMA(&hadc1,(uint32_t*)sample_buffer,256);
 
     //這個要填啥
     ///*to do ........................*/);
